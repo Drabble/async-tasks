@@ -1,6 +1,0 @@
-#ifndef ASYNCTASK_LIBRARY_H
-#define ASYNCTASK_LIBRARY_H
-
-void hello();
-
-#endif //ASYNCTASK_LIBRARY_H

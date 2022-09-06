@@ -1,4 +1,4 @@
-add_library(lib library.cpp)
+add_library(lib async_task.cpp)
 
 # Make the header files available to the project
 target_include_directories(
