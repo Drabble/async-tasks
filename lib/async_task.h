@@ -4,6 +4,7 @@
 #include <thread>
 #include <cstdio>
 #include <iostream>
+#include <memory>
 
 /// Asynchronous task management library
 namespace async_task {
@@ -48,7 +49,7 @@ namespace async_task {
         void setProgress(int progress);
     private:
         static void threadFunc(void *pParam);
-        std::thread *thread;
+        std::unique_ptr<std::thread> thread;
         std::condition_variable condition_variable;
         std::mutex mutex;
         AsyncTaskState status;

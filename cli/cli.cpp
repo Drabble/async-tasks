@@ -1,20 +1,14 @@
 #include "cli.h"
 
-async_task::AsyncTask *countTaskFactory() { return new CountTask("Count Task", 100000000); };
-async_task::AsyncTask *helloTaskFactory() { return new HelloTask("Hello Task"); };
+std::unique_ptr<async_task::AsyncTask> countTaskFactory() { return std::make_unique<CountTask>("Count Task", 100000000); };
+std::unique_ptr<async_task::AsyncTask> helloTaskFactory() { return std::make_unique<HelloTask>("Hello Task"); };
 
 Cli::Cli() : last_task_id(0) {
     task_factories["count"] = countTaskFactory;
     task_factories["hello"] = helloTaskFactory;
 };
 
-Cli::~Cli() {
-    for (auto &task: tasks) {
-        printf("Destroying task %d", task.first);
-        delete task.second;
-    }
-    tasks.clear();
-}
+Cli::~Cli() = default;
 
 void Cli::showUsage() {
     std::cout << "Usage:" << std::endl <<
@@ -136,13 +130,13 @@ void Cli::statusTask(unsigned int task_id) {
         return;
     }
     showTaskStatusHeader();
-    showTaskStatusRow(std::pair<const unsigned int, async_task::AsyncTask *>(task_id, tasks[task_id]));
+    showTaskStatusRow(task_id, tasks[task_id]);
 }
 
 void Cli::statusTask() {
     showTaskStatusHeader();
-    for (const auto &task: tasks) {
-        showTaskStatusRow(task);
+    for (auto &task: tasks) {
+        showTaskStatusRow(task.first, task.second);
     }
 }
 
@@ -156,15 +150,15 @@ void Cli::showTaskStatusHeader() {
     std::cout << std::setfill(' ') << std::fixed;
 }
 
-void Cli::showTaskStatusRow(const std::pair<const unsigned int, async_task::AsyncTask *> &task) {
+void Cli::showTaskStatusRow(const unsigned int id, std::unique_ptr<async_task::AsyncTask> &task) {
     int colWidth = 15;
     std::cout << std::setprecision(0) <<
               std::setw(colWidth) <<
-              task.first <<
+              id <<
               std::setprecision(4) <<
               std::setw(colWidth) <<
-              async_task::AsyncTaskStatusString[task.second->getStatus()] <<
+              async_task::AsyncTaskStatusString[task->getStatus()] <<
               std::setw(colWidth)
-              << std::to_string(task.second->getProgress()) + "%" << std::setw(colWidth) << task.second->getName()
+              << std::to_string(task->getProgress()) + "%" << std::setw(colWidth) << task->getName()
               << std::endl;
 }

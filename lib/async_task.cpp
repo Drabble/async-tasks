@@ -3,7 +3,7 @@
 async_task::AsyncTask::AsyncTask(std::string name) : name(std::move(name)), progress(0),
                                                      status(async_task::AsyncTaskState::RUNNING),
                                                      command(AsyncTaskCommand::PLAY) {
-    this->thread = new std::thread(threadFunc, this);
+    thread = std::make_unique<std::thread>(threadFunc, this);
 }
 
 async_task::AsyncTask::~AsyncTask() {
@@ -11,7 +11,7 @@ async_task::AsyncTask::~AsyncTask() {
     if (thread->joinable()) {
         thread->join();
     }
-    delete thread;
+    std::cout << "Successfully stopped task" << std::endl;
 }
 
 void async_task::AsyncTask::threadFunc(void *pParam) {

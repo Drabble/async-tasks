@@ -10,10 +10,11 @@
 #include <iterator>
 #include <map>
 #include <iomanip>
+#include <memory>
 #include "tasks/count_task.h"
 #include "tasks/hello_task.h"
 
-typedef async_task::AsyncTask *(*AsyncTaskFactory)();
+typedef std::unique_ptr<async_task::AsyncTask> (*AsyncTaskFactory)();
 
 /// Command line interface to instantiate hard coded asynchronous tasks.
 /// You can manage tasks using commands such as start pause stop resume...
@@ -26,7 +27,7 @@ public:
     void start();
 private:
     static void showTaskStatusHeader();
-    static void showTaskStatusRow(const std::pair<const unsigned int, async_task::AsyncTask*>& task);
+    static void showTaskStatusRow(const unsigned int id, std::unique_ptr<async_task::AsyncTask>& task);
 
     void startTask();
     void startTask(const std::string& taskType);
@@ -37,7 +38,7 @@ private:
     void statusTask();
 
     std::map<std::string, AsyncTaskFactory> task_factories;
-    std::map<unsigned int, async_task::AsyncTask*> tasks;
+    std::map<unsigned int, std::unique_ptr<async_task::AsyncTask> > tasks;
     unsigned int last_task_id;
 };
 
