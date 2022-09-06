@@ -40,13 +40,15 @@ namespace async_task {
         void stop();
         void wait();
 
-        int getProgress() const;
-        std::string getName() const;
-        AsyncTaskState getStatus() const;
+        [[nodiscard]] int getProgress() const;
+        [[nodiscard]] std::string getName() const;
+        [[nodiscard]] AsyncTaskState getStatus() const;
+
     protected:
         virtual void iterate() {};
         void complete();
         void setProgress(int progress);
+
     private:
         static void threadFunc(void *pParam);
         std::unique_ptr<std::thread> thread;

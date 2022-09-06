@@ -8,6 +8,7 @@
 class HelloTask : public async_task::AsyncTask {
 public:
     HelloTask(std::string name) : async_task::AsyncTask(std::move(name)) {}
+
     void iterate() override;
 };
 
