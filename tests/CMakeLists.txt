@@ -1,5 +1,5 @@
 # Unit Tests
-add_executable(test test.cpp)
+add_executable(test async_task.cpp tasks/wait_task.cpp)
 # Link tests executable against gtest & gtest_main & lib
 target_link_libraries(test GTest::gtest_main lib)
 
