@@ -51,6 +51,12 @@ Benchmarking the tasks to compare multiple elements. Asynchronous vs synchronous
 long iterations vs small iterations in a task, thread pool vs no thread pool for handling
 a lot of tasks.
 
+Reading arguments that follow the *start* command would allow us to pass these arguments to
+the related task factory and instantiate a task with custom arguments. For example the name of
+a file to read.
+
+Setting up a CI for automated testing with a tool such as GitHub Actions. 
+
 ## Style guide
 
 This project tries to follow [Bjarne Stroustrup's C++ Style and Technique FAQ](https://www.stroustrup.com/bs_faq2.html).
