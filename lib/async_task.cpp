@@ -22,29 +22,25 @@ void async_task::AsyncTask::threadFunc(void *pParam) {
         std::unique_lock<std::mutex> lock(pThis->mutex);
 
         // Release the mutex and exit the thread
-        if (pThis->command == AsyncTaskCommand::STOP) {
-            pThis->status = async_task::AsyncTaskState::STOPPED;
-            lock.unlock();
-            return;
-        }
-        // Wait on the condition variable for resume
-        else if (pThis->command == AsyncTaskCommand::PAUSE) {
-            pThis->status = async_task::AsyncTaskState::PAUSED;
-            pThis->condition_variable.wait(lock);
-            lock.unlock();
-            continue;
-        }
-        // Execute the next iteration of the iterate
-        else if (pThis->command == AsyncTaskCommand::PLAY) {
-            pThis->status = async_task::AsyncTaskState::RUNNING;
-            lock.unlock();
-            pThis->iterate();
-        }
-        // Completed
-        else if (pThis->command == AsyncTaskCommand::COMPLETE) {
-            pThis->status = async_task::AsyncTaskState::COMPLETED;
-            lock.unlock();
-            return;
+        switch(pThis->command){
+            case AsyncTaskCommand::STOP:
+                pThis->status = async_task::AsyncTaskState::STOPPED;
+                lock.unlock();
+                return;
+            case AsyncTaskCommand::PAUSE:
+                pThis->status = async_task::AsyncTaskState::PAUSED;
+                pThis->condition_variable.wait(lock);
+                lock.unlock();
+                continue;
+            case AsyncTaskCommand::PLAY:
+                pThis->status = async_task::AsyncTaskState::RUNNING;
+                lock.unlock();
+                pThis->iterate();
+                break;
+            case AsyncTaskCommand::COMPLETE:
+                pThis->status = async_task::AsyncTaskState::COMPLETED;
+                lock.unlock();
+                return;
         }
 
         // Relinquish the CPU
