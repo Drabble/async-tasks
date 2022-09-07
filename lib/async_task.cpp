@@ -27,20 +27,20 @@ void async_task::AsyncTask::threadFunc(void *pParam) {
             lock.unlock();
             return;
         }
-            // wait on the condition variable for resume
+        // Wait on the condition variable for resume
         else if (pThis->command == AsyncTaskCommand::PAUSE) {
             pThis->status = async_task::AsyncTaskState::PAUSED;
             pThis->condition_variable.wait(lock);
             lock.unlock();
             continue;
         }
-            // Execute the next iteration of the iterate
+        // Execute the next iteration of the iterate
         else if (pThis->command == AsyncTaskCommand::PLAY) {
             pThis->status = async_task::AsyncTaskState::RUNNING;
             lock.unlock();
             pThis->iterate();
         }
-            // Completed
+        // Completed
         else if (pThis->command == AsyncTaskCommand::COMPLETE) {
             pThis->status = async_task::AsyncTaskState::COMPLETED;
             lock.unlock();
