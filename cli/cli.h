@@ -11,8 +11,7 @@
 #include <map>
 #include <iomanip>
 #include <memory>
-#include "tasks/count_task.h"
-#include "tasks/hello_task.h"
+#include "async_task.h"
 
 typedef std::unique_ptr<async_task::AsyncTask> (*AsyncTaskFactory)();
 
@@ -25,17 +24,19 @@ public:
 
     static void showUsage();
     void start();
+    void addTaskType(const std::string &task_type, const AsyncTaskFactory &task);
 private:
     static void showTaskStatusHeader();
     static void showTaskStatusRow(const unsigned int id, std::unique_ptr<async_task::AsyncTask>& task);
 
+    void listTaskTypes();
     void startTask();
     void startTask(const std::string& taskType);
     void resumeTask(unsigned int taskId);
     void pauseTask(unsigned int taskId);
     void stopTask(unsigned int taskId);
     void statusTask(unsigned int taskId);
-    void statusTask();
+    void statusTasks();
 
     std::map<std::string, AsyncTaskFactory> task_factories;
     std::map<unsigned int, std::unique_ptr<async_task::AsyncTask> > tasks;

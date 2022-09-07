@@ -1,32 +1,22 @@
 #include "cli.h"
 
-std::unique_ptr<async_task::AsyncTask> countTaskFactory() { return std::make_unique<CountTask>("Count Task", 100000000); };
-std::unique_ptr<async_task::AsyncTask> helloTaskFactory() { return std::make_unique<HelloTask>("Hello Task"); };
-
-Cli::Cli() : last_task_id(0) {
-    task_factories["count"] = countTaskFactory;
-    task_factories["hello"] = helloTaskFactory;
-};
+Cli::Cli() : last_task_id(0) { };
 
 Cli::~Cli() = default;
 
 void Cli::showUsage() {
     std::cout << "Usage:" << std::endl <<
-        "\tcli" << std::endl << std::endl <<
+        "\tcli\t\t\t\t\tStart the command line interface" << std::endl << std::endl <<
         "Options:" << std::endl <<
-        "\t-h, --help\toutput usage information" << std::endl << std::endl <<
-        "How to use:" << std::endl <<
-        "There are four types of asynchronous tasks available." << std::endl <<
-        "\tcount\tCounts to 100'000'000 and stops" << std::endl <<
-        "\tread\tPause the task, it can be resumed" << std::endl <<
-        "\thello\tPrints World to stdout" << std::endl <<
-        "Use the following commands to use tasks." << std::endl <<
-        "\tstart [task_type_id]\tStart" << std::endl <<
-        "\tpause <task_id>\tPause the task, it can be resumed" << std::endl <<
-        "\tresume <task_id>\tResume the task after has been paused" << std::endl <<
-        "\tstop <task_id>\tStop the task forever" << std::endl <<
-        "\tstatus [task_id]\tShow the status of the given task or every task if no id given" << std::endl <<
-        "\tquit\t\tStop the cli" << std::endl << std::endl;
+        "\t-h, --help\t\t\tShow usage information" << std::endl << std::endl <<
+        "Once the CLI is started, use the following commands to manage tasks:" << std::endl <<
+        "\tlist\t\t\t\tShows the list of available task types" << std::endl <<
+        "\tstart [task_type]\tStart the task with the given task type or any task if task type is empty" << std::endl <<
+        "\tpause <task_id>\t\tPause the given task" << std::endl <<
+        "\tresume <task_id>\tResume the given task after it has been paused" << std::endl <<
+        "\tstop <task_id>\t\tStop the given task forever" << std::endl <<
+        "\tstatus [task_id]\tShow the status of the given task or every task if task id is empty" << std::endl <<
+        "\tquit\t\t\t\tStop the cli" << std::endl << std::endl;
 }
 
 void Cli::start() {
@@ -62,10 +52,12 @@ void Cli::start() {
             unsigned int task_id = 0;
             ss >> task_id;
             if (!task_id) {
-                statusTask();
+                statusTasks();
             } else {
                 statusTask(task_id);
             }
+        } else if (command == "list") {
+            listTaskTypes();
         } else if (command == "quit") {
             break;
         } else {
@@ -133,7 +125,7 @@ void Cli::statusTask(unsigned int task_id) {
     showTaskStatusRow(task_id, tasks[task_id]);
 }
 
-void Cli::statusTask() {
+void Cli::statusTasks() {
     showTaskStatusHeader();
     for (auto &task: tasks) {
         showTaskStatusRow(task.first, task.second);
@@ -161,4 +153,14 @@ void Cli::showTaskStatusRow(const unsigned int id, std::unique_ptr<async_task::A
               std::setw(colWidth)
               << std::to_string(task->getProgress()) + "%" << std::setw(colWidth) << task->getName()
               << std::endl;
+}
+
+void Cli::addTaskType(const std::string &task_type, const AsyncTaskFactory &task_factory) {
+    task_factories[task_type] = task_factory;
+}
+
+void Cli::listTaskTypes() {
+    for(auto& task_type : task_factories){
+        std::cout << task_type.first << std::endl;
+    }
 }
