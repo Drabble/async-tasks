@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
         Cli cli;
 
         cli.addTaskType("count", "Count to 100'000'000",countTaskFactory);
-        cli.addTaskType("hello", "Print World to stdout", helloTaskFactory);
+        cli.addTaskType("hello", "Print \"World\" to stdout", helloTaskFactory);
         cli.addTaskType("random", "Append a random integer to the log.txt file", randomTaskFactory);
 
         cli.start();

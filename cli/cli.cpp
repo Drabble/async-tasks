@@ -1,22 +1,24 @@
 #include "cli.h"
 
-Cli::Cli() : last_task_id(0) { };
+Cli::Cli() : last_task_id(0) {};
 
 Cli::~Cli() = default;
 
 void Cli::showUsage() {
     std::cout << "Usage:" << std::endl <<
-        "\tcli\t\t\t\t\tStart the command line interface" << std::endl << std::endl <<
-        "Options:" << std::endl <<
-        "\t-h, --help\t\t\tShow usage information" << std::endl << std::endl <<
-        "Once the CLI is started, use the following commands to manage tasks:" << std::endl <<
-        "\tlist\t\t\t\tShows the list of available task types" << std::endl <<
-        "\tstart [task_type]\tStart the task with the given task type or any task if task type is empty" << std::endl <<
-        "\tpause <task_id>\t\tPause the given task" << std::endl <<
-        "\tresume <task_id>\tResume the given task after it has been paused" << std::endl <<
-        "\tstop <task_id>\t\tStop the given task forever" << std::endl <<
-        "\tstatus [task_id]\tShow the status of the given task or every task if task id is empty" << std::endl <<
-        "\tquit\t\t\t\tStop the cli" << std::endl << std::endl;
+              "\tcli\t\t\t\t\tStart the command line interface" << std::endl << std::endl <<
+              "Options:" << std::endl <<
+              "\t-h, --help\t\t\tShow usage information" << std::endl << std::endl <<
+              "Once the CLI is started, use the following commands to manage tasks:" << std::endl <<
+              "\tlist\t\t\t\tShows the list of available task types" << std::endl <<
+              "\tstart [task_type]\tStart the task with the given task type or any task if task type is empty"
+              << std::endl <<
+              "\tpause <task_id>\t\tPause the given task" << std::endl <<
+              "\tresume <task_id>\tResume the given task after it has been paused" << std::endl <<
+              "\tstop <task_id>\t\tStop the given task forever" << std::endl <<
+              "\tstatus [task_id]\tShow the status of the given task or every task if task id is empty" << std::endl <<
+              "\thelp \t\t\t\tShow usage information" << std::endl <<
+              "\tquit\t\t\t\tStop the cli" << std::endl << std::endl;
 }
 
 void Cli::start() {
@@ -44,6 +46,8 @@ void Cli::start() {
             statusTask(arg);
         } else if (command == "list") {
             listTaskTypes();
+        } else if (command == "help") {
+            showUsage();
         } else if (command == "quit") {
             break;
         } else {
@@ -52,8 +56,8 @@ void Cli::start() {
     }
 }
 
-void Cli::startTask(const std::string& arg) {
-    if(arg.empty()){
+void Cli::startTask(const std::string &arg) {
+    if (arg.empty()) {
         if (task_factories.empty()) {
             std::cerr << "No task available..." << std::endl;
             return;
@@ -61,7 +65,7 @@ void Cli::startTask(const std::string& arg) {
         std::cout << "Starting task " << task_factories.begin()->first << "..." << std::endl;
         tasks[++last_task_id] = task_factories.begin()->second();
         std::cout << "Task " << last_task_id << " started" << std::endl;
-    } else{
+    } else {
         if (task_factories.find(arg) == task_factories.end()) {
             std::cerr << "No task with type " << arg << "..." << std::endl;
             return;
@@ -72,11 +76,11 @@ void Cli::startTask(const std::string& arg) {
     }
 }
 
-void Cli::resumeTask(const std::string& arg) {
+void Cli::resumeTask(const std::string &arg) {
     unsigned int task_id;
-    try{
+    try {
         task_id = std::stoi(arg);
-    } catch(...){
+    } catch (...) {
         std::cerr << "Invalid task id given..." << std::endl;
         return;
     }
@@ -89,11 +93,11 @@ void Cli::resumeTask(const std::string& arg) {
     std::cout << "Task " << task_id << " resumed" << std::endl;
 }
 
-void Cli::pauseTask(const std::string& arg) {
+void Cli::pauseTask(const std::string &arg) {
     unsigned int task_id;
-    try{
+    try {
         task_id = std::stoi(arg);
-    } catch(...){
+    } catch (...) {
         std::cerr << "Invalid task id given..." << std::endl;
         return;
     }
@@ -106,11 +110,11 @@ void Cli::pauseTask(const std::string& arg) {
     std::cout << "Task " << task_id << " paused" << std::endl;
 }
 
-void Cli::stopTask(const std::string& arg) {
+void Cli::stopTask(const std::string &arg) {
     unsigned int task_id;
-    try{
+    try {
         task_id = std::stoi(arg);
-    } catch(...){
+    } catch (...) {
         std::cerr << "Invalid task id given..." << std::endl;
         return;
     }
@@ -123,17 +127,17 @@ void Cli::stopTask(const std::string& arg) {
     std::cout << "Task " << task_id << " stopped" << std::endl;
 }
 
-void Cli::statusTask(const std::string& arg) {
-    if(arg.empty()){
+void Cli::statusTask(const std::string &arg) {
+    if (arg.empty()) {
         showTaskStatusHeader();
         for (auto &task: tasks) {
             showTaskStatusRow(task.first, task.second);
         }
-    } else{
+    } else {
         unsigned int task_id;
-        try{
+        try {
             task_id = std::stoi(arg);
-        } catch(...){
+        } catch (...) {
             std::cerr << "Invalid task id given..." << std::endl;
             return;
         }
@@ -169,13 +173,25 @@ void Cli::showTaskStatusRow(const unsigned int id, std::unique_ptr<async_task::A
               << std::endl;
 }
 
-void Cli::addTaskType(const std::string &task_type, const std::string &description, const AsyncTaskFactory &task_factory) {
+void
+Cli::addTaskType(const std::string &task_type, const std::string &description, const AsyncTaskFactory &task_factory) {
     task_factories[task_type] = task_factory;
     task_descriptions[task_type] = description;
 }
 
 void Cli::listTaskTypes() {
-    for(auto& task_type : task_factories){
-        std::cout << task_type.first << "\t-\t" << task_descriptions[task_type.first] << std::endl;
+    std::cout << std::setfill('*') << std::setw(75) << "*" << std::endl;
+    std::cout << std::setfill(' ') << std::fixed;
+    std::cout << std::setw(15) << "task type" << std::setw(60) << "description" << std::endl;
+    std::cout << std::setfill('*') << std::setw(75) << "*" << std::endl;
+    std::cout << std::setfill(' ') << std::fixed;
+    for (auto &task_type: task_factories) {
+        std::cout << std::setprecision(0) <<
+                  std::setw(15) <<
+                  task_type.first <<
+                  std::setprecision(4) <<
+                  std::setw(60) <<
+                  task_descriptions[task_type.first] <<
+                  std::endl;
     }
 }
