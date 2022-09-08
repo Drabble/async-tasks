@@ -3,13 +3,14 @@
 
 #include <iostream>
 #include <thread>
+#include <fstream>
 #include "async_task.h"
 
 /// Asynchronous task that will count to the given total value.
 /// Each iteration increases the counter and the current progress of the task.
 class CountTask : public async_task::AsyncTask {
 public:
-    CountTask(std::string name, int total) : async_task::AsyncTask(std::move(name)), total(total), count(0) {}
+    CountTask(std::string name, int total);
 
     void iterate() override;
 

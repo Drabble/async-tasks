@@ -7,7 +7,7 @@
 /// Asynchronous task that will display "World" to the console.
 class HelloTask : public async_task::AsyncTask {
 public:
-    HelloTask(std::string name) : async_task::AsyncTask(std::move(name)) {}
+    explicit HelloTask(std::string name);
 
     void iterate() override;
 };

@@ -24,10 +24,10 @@ public:
 
     static void showUsage();
     void start();
-    void addTaskType(const std::string &task_type, const AsyncTaskFactory &task);
+    void addTaskType(const std::string &task_type, const std::string &description, const AsyncTaskFactory &task);
 private:
     static void showTaskStatusHeader();
-    static void showTaskStatusRow(const unsigned int id, std::unique_ptr<async_task::AsyncTask>& task);
+    static void showTaskStatusRow(unsigned int id, std::unique_ptr<async_task::AsyncTask>& task);
 
     void listTaskTypes();
     void startTask();
@@ -39,6 +39,7 @@ private:
     void statusTasks();
 
     std::map<std::string, AsyncTaskFactory> task_factories;
+    std::map<std::string, std::string> task_descriptions;
     std::map<unsigned int, std::unique_ptr<async_task::AsyncTask> > tasks;
     unsigned int last_task_id;
 };

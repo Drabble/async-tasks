@@ -155,12 +155,13 @@ void Cli::showTaskStatusRow(const unsigned int id, std::unique_ptr<async_task::A
               << std::endl;
 }
 
-void Cli::addTaskType(const std::string &task_type, const AsyncTaskFactory &task_factory) {
+void Cli::addTaskType(const std::string &task_type, const std::string &description, const AsyncTaskFactory &task_factory) {
     task_factories[task_type] = task_factory;
+    task_descriptions[task_type] = description;
 }
 
 void Cli::listTaskTypes() {
     for(auto& task_type : task_factories){
-        std::cout << task_type.first << std::endl;
+        std::cout << task_type.first << "\t-\t" << task_descriptions[task_type.first] << std::endl;
     }
 }

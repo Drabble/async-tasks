@@ -6,7 +6,7 @@
 #include "cli.h"
 
 std::unique_ptr<async_task::AsyncTask> countTaskFactory() {
-    return std::make_unique<CountTask>("Count Task", 100000000);
+    return std::make_unique<CountTask>("Count Task", 100);
 };
 
 std::unique_ptr<async_task::AsyncTask> helloTaskFactory() {
@@ -20,8 +20,8 @@ int main(int argc, char **argv) {
     } else {
         Cli cli;
 
-        cli.addTaskType("count", countTaskFactory);
-        cli.addTaskType("hello", helloTaskFactory);
+        cli.addTaskType("count", "Count to 100'000'000",countTaskFactory);
+        cli.addTaskType("hello", "Print World to stdout", helloTaskFactory);
 
         cli.start();
     }
