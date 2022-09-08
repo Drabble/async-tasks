@@ -28,7 +28,7 @@ void Cli::start() {
         std::getline(std::cin, line);
         std::stringstream ss(line);
 
-        // Extract the command and arg
+        // Extract the command and argument
         std::string command;
         ss >> command;
         std::string arg;
@@ -57,6 +57,7 @@ void Cli::start() {
 }
 
 void Cli::startTask(const std::string &arg) {
+    // If no task type is given, we start the first task in the factory list
     if (arg.empty()) {
         if (task_factories.empty()) {
             std::cerr << "No task available..." << std::endl;
@@ -128,6 +129,7 @@ void Cli::stopTask(const std::string &arg) {
 }
 
 void Cli::statusTask(const std::string &arg) {
+    // If no task id is given, we show the status of every task
     if (arg.empty()) {
         showTaskStatusHeader();
         for (auto &task: tasks) {

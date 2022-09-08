@@ -1,16 +1,12 @@
 #ifndef ASYNCTASK_CLI_H
 #define ASYNCTASK_CLI_H
 
-#include <cstdio>
 #include <string>
 #include <vector>
-#include <cstdio>
 #include <iostream>
 #include <sstream>
-#include <iterator>
 #include <map>
 #include <iomanip>
-#include <memory>
 #include "async_task.h"
 
 typedef std::unique_ptr<async_task::AsyncTask> (*AsyncTaskFactory)();

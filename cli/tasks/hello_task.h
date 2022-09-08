@@ -9,6 +9,7 @@ class HelloTask : public async_task::AsyncTask {
 public:
     explicit HelloTask(std::string name);
 
+protected:
     void iterate() override;
 };
 

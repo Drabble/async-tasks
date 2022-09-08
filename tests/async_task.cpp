@@ -9,7 +9,7 @@ TEST(AsyncTask, SingleExecution) {
     ASSERT_EQ(task.getStatus(), async_task::AsyncTaskState::COMPLETED);
 }
 
-/// Create 1000 task, wait for them to complete and check status.
+/// Create 1000 tasks, wait for them to complete and check status.
 TEST(AsyncTask, MultiExecution) {
     TestTask* tasks[1000];
     for(auto & task : tasks){
@@ -24,8 +24,6 @@ TEST(AsyncTask, MultiExecution) {
 
 /// Pause a task, resume it and wait for it to complete.
 TEST(AsyncTask, PauseThenResumeExecution) {
-    for(int i = 0; i < 10000; i++){
-
     // Start the task with a delay of 100 millisecond between each iteration
     TestTask task("Test", 2, 100);
 
@@ -47,10 +45,9 @@ TEST(AsyncTask, PauseThenResumeExecution) {
 
     // Resume and complete task
     task.resume();
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    task.wait();
     ASSERT_EQ(task.getProgress(), 100);
     ASSERT_EQ(task.getStatus(), async_task::AsyncTaskState::COMPLETED);
-    }
 }
 
 /// Pause a task and then stop it.

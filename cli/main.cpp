@@ -1,5 +1,3 @@
-#include <stdlib.h>
-#include <memory>
 #include "async_task.h"
 #include "tasks/count_task.h"
 #include "tasks/hello_task.h"
@@ -7,7 +5,7 @@
 #include "cli.h"
 
 std::unique_ptr<async_task::AsyncTask> countTaskFactory() {
-    return std::make_unique<CountTask>("Count Task", 100);
+    return std::make_unique<CountTask>("Count Task", 100000000);
 };
 
 std::unique_ptr<async_task::AsyncTask> helloTaskFactory() {

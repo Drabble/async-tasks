@@ -9,6 +9,7 @@ class CountTask : public async_task::AsyncTask {
 public:
     CountTask(std::string name, int total);
 
+protected:
     void iterate() override;
 
 private:

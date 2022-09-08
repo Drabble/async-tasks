@@ -92,6 +92,6 @@ async_task::AsyncTaskState async_task::AsyncTask::getStatus() const {
     return status;
 }
 
-void async_task::AsyncTask::setProgress(int progress) {
-    this->progress = progress;
+void async_task::AsyncTask::setProgress(int p) {
+    progress = p;
 }

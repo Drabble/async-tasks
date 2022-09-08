@@ -5,12 +5,13 @@
 #include <thread>
 #include "async_task.h"
 
-/// Asynchronous task that will run x iterations before completing.
+/// An asynchronous task that will run x iterations before completing.
 /// The task will wait *delay_between_iterations* milliseconds between each iteration.
 class TestTask : public async_task::AsyncTask {
 public:
     TestTask(std::string name, int iterations, int delay_between_iterations);
 
+protected:
     void iterate() override;
 
 private:
@@ -18,6 +19,5 @@ private:
     int count;
     int delay_between_iterations;
 };
-
 
 #endif //ASYNCTASKS_WaitTask_H

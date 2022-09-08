@@ -10,6 +10,7 @@ class RandomTask : public async_task::AsyncTask {
 public:
     explicit RandomTask(std::string name);
 
+protected:
     void iterate() override;
 };
 

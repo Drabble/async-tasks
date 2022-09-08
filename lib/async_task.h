@@ -18,18 +18,19 @@ namespace async_task {
             { "Running", "Paused", "Stopped", "Completed" };
 
     /// `AsyncTask` is an abstract class for creating finite asynchronous tasks.
+    ///
     /// An asynchronous task starts in the **RUNNING** state. It can be altered with the following commands:
     /// - `resume()` : Resumes the task if it has been paused
     /// - `pause()` : Pauses the task
     /// - `stop()` : Stops the task
     /// - `wait()` : Wait (blockingly) for the task to end
-    /// In order to create an asynchronous task, extend it with your custom class. You need to implement only
-    /// one method called `iterate()`. Iterate must contain the logic of your asynchronous and it will be run
-    /// continuously as long as the task is running. The logic of your asynchronous task should be done in small
-    /// iterations, such that, in between each iteration, the asynchronous task is able to react to pause/stop commands.
-    /// Inside iterate you should update the progress variable using `setProgress()`, the value represented by progress
-    /// is up to you but it is recommended to use a percentage. Finally, when the task is done, you should call
-    /// `complete()` to terminate the task.
+    ///
+    /// In order to create an asynchronous task, `AsyncTask` can be inherited in a concrete class.
+    /// Only one method called `iterate()` needs to be implemented. `iterate()` contains the logic of the task and it
+    /// should run in small iterations, such that, in between each iteration the asynchronous task is able to react to
+    /// commands (pause, stop, resume...). The `iterate()` method should update the progress variable using
+    /// `setProgress()`, the value of progress represents a percentage. When the task is done, `iterate()` should call
+    /// `complete()` to terminate the task successfully.
     class AsyncTask {
     public:
         explicit AsyncTask(std::string name);
@@ -47,13 +48,13 @@ namespace async_task {
     protected:
         virtual void iterate() {};
         void complete();
-        void setProgress(int progress);
+        void setProgress(int p);
 
     private:
-        static void threadFunc(void *pParam);
+        static void threadFunc(void *pParam); // the main function that is passed to the thread
         std::unique_ptr<std::thread> thread;
-        std::condition_variable condition_variable;
-        std::mutex mutex;
+        std::condition_variable condition_variable; // used for pause
+        std::mutex mutex; // required to wait on the condition variable
         AsyncTaskState status;
         AsyncTaskCommand command;
         std::string name;
