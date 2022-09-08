@@ -1,9 +1,6 @@
 #ifndef ASYNCTASKS_COUNT_TASK_H
 #define ASYNCTASKS_COUNT_TASK_H
 
-#include <iostream>
-#include <thread>
-#include <fstream>
 #include "async_task.h"
 
 /// Asynchronous task that will count to the given total value.

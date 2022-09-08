@@ -21,114 +21,128 @@ void Cli::showUsage() {
 
 void Cli::start() {
     while (true) {
+        // Read line
         std::string line;
         std::getline(std::cin, line);
         std::stringstream ss(line);
 
+        // Extract the command and arg
         std::string command;
         ss >> command;
+        std::string arg;
+        ss >> arg;
 
         if (command == "start") {
-            std::string task_type;
-            ss >> task_type;
-            if (task_type.empty()) {
-                startTask();
-            } else {
-                startTask(task_type);
-            }
+            startTask(arg);
         } else if (command == "pause") {
-            unsigned int task_id = 0;
-            ss >> task_id;
-            pauseTask(task_id);
+            pauseTask(arg);
         } else if (command == "resume") {
-            unsigned int task_id = 0;
-            ss >> task_id;
-            resumeTask(task_id);
+            resumeTask(arg);
         } else if (command == "stop") {
-            unsigned int task_id = 0;
-            ss >> task_id;
-            stopTask(task_id);
+            stopTask(arg);
         } else if (command == "status") {
-            unsigned int task_id = 0;
-            ss >> task_id;
-            if (!task_id) {
-                statusTasks();
-            } else {
-                statusTask(task_id);
-            }
+            statusTask(arg);
         } else if (command == "list") {
             listTaskTypes();
         } else if (command == "quit") {
             break;
         } else {
-            printf("Unknown command %s...\n", command.c_str());
+            std::cerr << "Unknown command " << command << "..." << std::endl;
         }
     }
 }
 
-void Cli::startTask() {
-    if (task_factories.empty()) {
-        printf("No task available...\n");
-        return;
+void Cli::startTask(const std::string& arg) {
+    if(arg.empty()){
+        if (task_factories.empty()) {
+            std::cerr << "No task available..." << std::endl;
+            return;
+        }
+        std::cout << "Starting task " << task_factories.begin()->first << "..." << std::endl;
+        tasks[++last_task_id] = task_factories.begin()->second();
+        std::cout << "Task " << last_task_id << " started" << std::endl;
+    } else{
+        if (task_factories.find(arg) == task_factories.end()) {
+            std::cerr << "No task with type " << arg << "..." << std::endl;
+            return;
+        }
+        std::cout << "Starting task " << arg << "..." << std::endl;
+        tasks[++last_task_id] = task_factories[arg]();
+        std::cout << "Task " << last_task_id << " started" << std::endl;
     }
-    printf("Starting task %s...\n", task_factories.begin()->first.c_str());
-    tasks[++last_task_id] = task_factories.begin()->second();
-    printf("Task started with id %d...\n", last_task_id);
 }
 
-void Cli::startTask(const std::string &taskType) {
-    if (task_factories.find(taskType) == task_factories.end()) {
-        printf("No task with type %s...\n", taskType.c_str());
+void Cli::resumeTask(const std::string& arg) {
+    unsigned int task_id;
+    try{
+        task_id = std::stoi(arg);
+    } catch(...){
+        std::cerr << "Invalid task id given..." << std::endl;
         return;
     }
-    printf("Starting task %s...\n", taskType.c_str());
-    tasks[++last_task_id] = task_factories[taskType]();
-    printf("Task started with id %d...\n", last_task_id);
-}
-
-void Cli::resumeTask(unsigned int task_id) {
     if (tasks.find(task_id) == tasks.end()) {
-        printf("No task with id %d...\n", task_id);
+        std::cerr << "No task with id " << task_id << "..." << std::endl;
         return;
     }
-    printf("Resuming task with id %d...\n", task_id);
+    std::cout << "Resuming task " << task_id << "..." << std::endl;
     tasks[task_id]->resume();
-    printf("Task with id %d resumed ...\n", task_id);
+    std::cout << "Task " << task_id << " resumed" << std::endl;
 }
 
-void Cli::pauseTask(unsigned int task_id) {
-    if (tasks.find(task_id) == tasks.end()) {
-        printf("No task with id %d...\n", task_id);
+void Cli::pauseTask(const std::string& arg) {
+    unsigned int task_id;
+    try{
+        task_id = std::stoi(arg);
+    } catch(...){
+        std::cerr << "Invalid task id given..." << std::endl;
         return;
     }
-    printf("Pausing task with id %d...\n", task_id);
+    if (tasks.find(task_id) == tasks.end()) {
+        std::cerr << "No task with id " << task_id << "..." << std::endl;
+        return;
+    }
+    std::cout << "Pausing task " << task_id << "..." << std::endl;
     tasks[task_id]->pause();
-    printf("Task with id %d paused...\n", task_id);
+    std::cout << "Task " << task_id << " paused" << std::endl;
 }
 
-void Cli::stopTask(unsigned int task_id) {
-    if (tasks.find(task_id) == tasks.end()) {
-        printf("No task with id %d...\n", task_id);
+void Cli::stopTask(const std::string& arg) {
+    unsigned int task_id;
+    try{
+        task_id = std::stoi(arg);
+    } catch(...){
+        std::cerr << "Invalid task id given..." << std::endl;
         return;
     }
-    printf("Stopping task with id %d...\n", task_id);
+    if (tasks.find(task_id) == tasks.end()) {
+        std::cerr << "No task with id " << task_id << "..." << std::endl;
+        return;
+    }
+    std::cout << "Stopping task " << task_id << "..." << std::endl;
     tasks[task_id]->stop();
-    printf("Task with id %d stopped...\n", task_id);
+    std::cout << "Task " << task_id << " stopped" << std::endl;
 }
 
-void Cli::statusTask(unsigned int task_id) {
-    if (tasks.find(task_id) == tasks.end()) {
-        printf("No task with id %d...\n", task_id);
-        return;
-    }
-    showTaskStatusHeader();
-    showTaskStatusRow(task_id, tasks[task_id]);
-}
-
-void Cli::statusTasks() {
-    showTaskStatusHeader();
-    for (auto &task: tasks) {
-        showTaskStatusRow(task.first, task.second);
+void Cli::statusTask(const std::string& arg) {
+    if(arg.empty()){
+        showTaskStatusHeader();
+        for (auto &task: tasks) {
+            showTaskStatusRow(task.first, task.second);
+        }
+    } else{
+        unsigned int task_id;
+        try{
+            task_id = std::stoi(arg);
+        } catch(...){
+            std::cerr << "Invalid task id given..." << std::endl;
+            return;
+        }
+        if (tasks.find(task_id) == tasks.end()) {
+            std::cerr << "No task with id " << task_id << "..." << std::endl;
+            return;
+        }
+        showTaskStatusHeader();
+        showTaskStatusRow(task_id, tasks[task_id]);
     }
 }
 
