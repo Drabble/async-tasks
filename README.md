@@ -44,9 +44,6 @@ cmake --build build
 We can potentially improve thread creation with a thread pool. This would allow reuse of
 old threads, instead of recreating them. Creating a thread has a big overhead.
 
-It would be interesting to try to use atomics instead of mutexes in the thread to
-avoid blocking calls.
-
 Benchmarking the tasks to compare multiple elements. Asynchronous vs synchronous, 
 long iterations vs small iterations in a task, thread pool vs no thread pool for handling
 a lot of tasks.
@@ -56,6 +53,12 @@ the related task factory and instantiate a task with custom arguments. For examp
 a file to read.
 
 Setting up a CI for automated testing with a tool such as GitHub Actions. 
+
+Caching async tasks when the number of tasks under execution is above a certain threshold. There is a limit
+to the number of concurrent thread depending on the system.
+
+Tests should be improved to avoid using thread sleep. Thread sleep does not always execute in the same way based
+on the underlying machine and the CPU load.
 
 ## Style guide
 
